@@ -13,7 +13,7 @@ namespace Shipping.Core.Entities
 
         public List<OrderLine> Lines { get; private set; } = new();
 
-        public Order(Guid? id) => Id = id ?? Guid.NewGuid();
+        public Order(Guid? id = null) => Id = id ?? Guid.NewGuid();
 
         public void AddLine(string sku, int qty, Money unitPrice)
         {

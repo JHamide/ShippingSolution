@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Shipping.Core.ValueObjects;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,8 @@ namespace Shipping.Core.Entities
 
         public string Email { get; private set; }
 
+        public Address Address { get; private set; }
+
         private Customer() { }
 
         public Customer(string name, string email)
@@ -27,6 +31,11 @@ namespace Shipping.Core.Entities
             Id = Guid.NewGuid();
             Name = name;
             Email = email;
+        }
+
+        public void UpdateAddress(Address newAddress)
+        {
+            Address = newAddress;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Shipping.Application.DTOs
     {
         public string Name { get; set; }
         public string Email { get; set; }
-        public Address Address { get; set; }
+        public AddressDto Address { get; set; }
     }
 
     public class AddressDto

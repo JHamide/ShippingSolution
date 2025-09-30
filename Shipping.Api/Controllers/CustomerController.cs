@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shipping.Application.DTOs;
+using Shipping.Application.UseCases;
 using Shipping.Core.Entities;
 using Shipping.Core.Interfaces;
 using Shipping.Core.ValueObjects;
@@ -18,19 +19,21 @@ namespace Shipping.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerDto dto)
+        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerDto dto, [FromServices] ICreateCustomerUseCase createCustomerUseCase)
         {
-            var customer = new Customer(dto.Name, dto.Email);
-            if (dto.Address != null)
+            try
             {
-                customer.UpdateAddress(new Address(dto.Address.street, dto.Address.city, dto.Address.country));
+                var id = await createCustomerUseCase.ExecuteAsync(dto);
+                return Ok(new { CustomerId = id });
             }
-            await _customerRepository.SaveAsync(customer);
-            return Ok(customer);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCustomer(Guid id)
+        public async Task<IActionResult> GetCustomer(Guid id, [FromServices] ICreateCustomerUseCase createCustomerUseCase)
         {
             var customer = await _customerRepository.GetByIdAsync(id);
 

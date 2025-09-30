@@ -37,5 +37,15 @@ namespace Shipping.Core.Entities
         {
             Address = newAddress;
         }
+
+        public void UpdateName(string newName)
+        {
+            Name = newName;
+        }
+
+        public void UpdateEmail(string newEmail)
+        {
+            Email = newEmail;
+        }
     }
 }

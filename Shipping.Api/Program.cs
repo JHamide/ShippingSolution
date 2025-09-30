@@ -12,6 +12,7 @@ builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
 builder.Services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
 builder.Services.AddScoped<ICreateOrderUseCase, CreateOrderUseCase>();
 builder.Services.AddScoped<ICreateCustomerUseCase, CreateCustomerUseCase>();
+builder.Services.AddScoped<IUpdateCustomerUseCase, UpdateCustomerUseCase>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shipping.Infrastructure.Services
 {
-    internal class PercentageShippingCalculator : IShippingCostCalculator
+    public class PercentageShippingCalculator : IShippingCostCalculator
     {
         private readonly decimal _rate;
 

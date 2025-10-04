@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shipping.Application.UseCases
 {
-    internal class CalculateShippingCostUseCase
+    internal class CalculateShippingCostUseCase : ICalculateShippingCostUseCase
     {
         private readonly IShippingCostCalculator _calculator;
 

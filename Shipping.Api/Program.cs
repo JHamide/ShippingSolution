@@ -1,7 +1,9 @@
 using Shipping.Application.DTOs;
 using Shipping.Application.UseCases;
+using Shipping.Core.Entities;
 using Shipping.Core.Interfaces;
 using Shipping.Infrastructure.Repositories;
+using Shipping.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
 builder.Services.AddScoped<ICreateOrderUseCase, CreateOrderUseCase>();
 builder.Services.AddScoped<ICreateCustomerUseCase, CreateCustomerUseCase>();
 builder.Services.AddScoped<IUpdateCustomerUseCase, UpdateCustomerUseCase>();
+builder.Services.AddSingleton<IShippingCostCalculator, FlatRateShippingCalculator>();
+// builder.Services.AddSingleton<IShippingCostCalculator>(sp => new PercentageShippingCalculator(0.05m));
+builder.Services.AddTransient<CalculateShippingCostUseCase>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -44,5 +49,6 @@ app.MapGet("/orders/{id:guid}", async (Guid id, IOrderRepository repo) =>
     var order = await repo.GetByIdAsync(id);
     return order is null ? Results.NotFound() : Results.Ok(order);
 });
+
 
 app.Run();

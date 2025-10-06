@@ -50,5 +50,17 @@ app.MapGet("/orders/{id:guid}", async (Guid id, IOrderRepository repo) =>
     return order is null ? Results.NotFound() : Results.Ok(order);
 });
 
+app.MapPost("shipping/cost", (CreateOrderRequest req, CalculateShippingCostUseCase usecase) =>
+{
+    var order = new Order();
+    foreach (var line in req.Lines)
+    {
+        order.AddLine(line.SKU, line.Quantity, new Shipping.Core.ValueObjects.Money(line.UnitPrice, "USD"))
+    }
+    var cost = usecase.Execute(order);
+    return Results.Ok(cost);
+})
+    .WithName("CalculateShippingCost")
+    .WithTags("Shipping");
 
 app.Run();

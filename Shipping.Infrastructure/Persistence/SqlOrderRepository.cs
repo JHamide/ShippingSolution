@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shipping.Infrastructure.Persistence
 {
-    internal class SqlOrderRepository : IOrderRepository
+    public class SqlOrderRepository : IOrderRepository
     {
         private readonly ShippingDbContext _db;
         public SqlOrderRepository(ShippingDbContext db)

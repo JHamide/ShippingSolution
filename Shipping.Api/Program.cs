@@ -1,16 +1,21 @@
+using Microsoft.EntityFrameworkCore;
 using Shipping.Application.DTOs;
 using Shipping.Application.UseCases;
 using Shipping.Core.Entities;
 using Shipping.Core.Interfaces;
+using Shipping.Infrastructure.Persistence;
 using Shipping.Infrastructure.Repositories;
 using Shipping.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("Sqlite") ?? "Data Source=shipping.db";
+builder.Services.AddDbContext<ShippingDbContext>(options => options.UseSqlite(connectionString));
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
+//builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
+builder.Services.AddScoped<IOrderRepository, SqlOrderRepository>();
 builder.Services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
 builder.Services.AddScoped<ICreateOrderUseCase, CreateOrderUseCase>();
 builder.Services.AddScoped<ICreateCustomerUseCase, CreateCustomerUseCase>();
@@ -24,6 +29,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ShippingDbContext>();
+    db.Database.EnsureCreated(); 
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

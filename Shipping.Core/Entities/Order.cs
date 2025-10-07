@@ -1,6 +1,7 @@
 ﻿using Shipping.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -13,39 +14,30 @@ namespace Shipping.Core.Entities
         private readonly List<OrderLine> _lines = new();
 
         public Guid Id { get; private set; }
-
         public Guid CustomerId { get; private set; }
-
-        public DateTime CreatedAt { get; private set; }
 
         public IReadOnlyCollection<OrderLine> Lines => _lines.AsReadOnly();
 
-        public Order() { }
+        private Order() { }
 
         public Order(Guid customerId)
         {
             Id = Guid.NewGuid();
             CustomerId = customerId;
-            CreatedAt = DateTime.UtcNow;
         }
 
         public void AddLine(string sku, int qty, Money unitPrice)
         {
             if (qty <= 0)
-                throw new ArgumentException("Quantity must be > 0 ", nameof(qty));
-            _lines.Add(new OrderLine(sku, qty, unitPrice));
-        }
+                throw new ArgumentException("Quantity must be greater than zero", nameof(qty));
 
-        public void RemoveLine(string sku)
-        {
-            _lines.RemoveAll(lines => lines.SKU == sku);
+            _lines.Add(new OrderLine(sku, qty, unitPrice));
         }
 
         public Money GetTotal()
         {
-            var total = _lines.Sum(l => l.Quantity * l.UnitPrice.Amount);
-            var currency = _lines.FirstOrDefault()?.UnitPrice.Currency ?? "USD";
-            return new Money(total, currency);
+            var total = _lines.Sum(x => x.Quantity * x.UnitPrice.Amount);
+            return new Money(total, "USD");
         }
     }
 

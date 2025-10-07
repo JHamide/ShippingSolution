@@ -23,7 +23,7 @@ namespace Shipping.Tests
 
             var useCase = new CalculateShippingCostUseCase(mockCalc.Object);
 
-            var order = new Order();
+            var order = new Order(Guid.NewGuid());
             order.AddLine("sku1", 2, new Money(5m, "usd"));
 
             //Act

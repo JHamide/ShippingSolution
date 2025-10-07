@@ -63,7 +63,7 @@ app.MapGet("/orders/{id:guid}", async (Guid id, IOrderRepository repo) =>
 
 app.MapPost("shipping/cost", (CreateOrderRequest req, CalculateShippingCostUseCase usecase) =>
 {
-    var order = new Order();
+    var order = new Order(Guid.NewGuid());
     foreach (var line in req.Lines)
     {
         order.AddLine(line.SKU, line.Quantity, new Shipping.Core.ValueObjects.Money(line.UnitPrice, "USD"));

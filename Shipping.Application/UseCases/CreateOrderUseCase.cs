@@ -17,7 +17,7 @@ namespace Shipping.Application.UseCases
 
         public async Task<Guid> ExecuteAsync(CreateOrderRequest request)
         {
-            var order = new Order();
+            var order = new Order(Guid.NewGuid());
             foreach (var l in request.Lines)
             {
                 order.AddLine(l.SKU, l.Quantity, new Money(l.UnitPrice, "USD"));

@@ -1,48 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shipping.Core.Entities;
-using Shipping.Core.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shipping.Infrastructure.Persistence
 {
     public class ShippingDbContext : DbContext
     {
-        public ShippingDbContext(DbContextOptions<ShippingDbContext> options) : base(options) { }
+        public ShippingDbContext(DbContextOptions<ShippingDbContext> options)
+            : base(options) { }
 
-        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderLine> OrderLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Order table
-            modelBuilder.Entity<Order>(order =>
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Order>(builder =>
             {
-                order.HasKey(o => o.Id);
+                builder.ToTable("Orders");
+                builder.HasKey(o => o.Id);
 
-                // map private backing field _lines as an owned collection
-                order.OwnsMany(typeof(OrderLine), "_lines", ol =>
+                builder.Property(o => o.CustomerId)
+                       .IsRequired();
+
+                builder.HasMany(o => o.Lines)
+                       .WithOne()
+                       .HasForeignKey("OrderId")
+                       .OnDelete(DeleteBehavior.Cascade);
+
+                builder.Navigation(o => o.Lines)
+                       .UsePropertyAccessMode(PropertyAccessMode.Field);
+            });
+
+            // Mapping OrderLine
+            modelBuilder.Entity<OrderLine>(line =>
+            {
+                line.ToTable("OrderLines");
+                line.HasKey(l => l.Id);
+
+                line.Property(l => l.SKU)
+                       .IsRequired()
+                       .HasMaxLength(50);
+
+                line.Property(l => l.Quantity)
+                       .IsRequired();
+
+                line.OwnsOne(l => l.UnitPrice, money =>
                 {
-                    ol.WithOwner().HasForeignKey("OrderId");
-                    ol.Property<Guid>("Id");
-                    ol.HasKey("Id");
-
-                    ol.Property<string>("SKU").HasColumnName("SKU").IsRequired();
-                    ol.Property<int>("Quantity").IsRequired();
-
-                    // map Money as owned type inside OrderLine
-                    ol.OwnsOne(typeof(Money), "Price", mb =>
-                    {
-                        mb.Property<decimal>("Amount").HasColumnName("PriceAmount");
-                        mb.Property<string>("Currency").HasColumnName("PriceCurrency");
-                    });
-
-                    ol.ToTable("OrderLines"); // put owned collection in separate table
+                    money.Property(m => m.Amount).HasColumnName("UnitPriceAmount");
+                    money.Property(m => m.Currency).HasColumnName("UnitPriceCurrency").HasMaxLength(3);
                 });
-
-                order.ToTable("Orders");
             });
         }
     }

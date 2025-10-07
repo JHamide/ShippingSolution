@@ -16,7 +16,7 @@ namespace Shipping.Tests
         {
             //Arrange
             var calc = new FlatRateShippingCalculator();
-            var order = new Order();
+            var order = new Order(Guid.NewGuid());
             order.AddLine("sku1", 3, new Money(10m, "USD"));
 
             //Act
@@ -31,7 +31,7 @@ namespace Shipping.Tests
         {
             //Arrange
             var calc = new PercentageShippingCalculator(0.1m);
-            var order = new Order();
+            var order = new Order(Guid.NewGuid());
             order.AddLine("sku1", 2, new Money(50m, "USD")); // total = 100
 
             //Act

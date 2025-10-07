@@ -6,8 +6,21 @@ using System.Threading.Tasks;
 
 namespace Shipping.Core.ValueObjects
 {
-    public record Address(string street, string city, string country)
+    public record Address
     {
-        public override string ToString() => $"{street}, {city}, {country}";
+        public string Street { get; private set; } = string.Empty;
+        public string City { get; private set; } = string.Empty;
+        public string Country { get; private set; } = string.Empty;
+
+        public Address() { }
+
+        public Address(string street, string city, string country)
+        {
+            Street = street;
+            City = city;
+            Country = country;
+        }
+
+        public override string ToString() => $"{Street}, {City}, {Country}";
     }
 }

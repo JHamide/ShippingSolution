@@ -21,7 +21,7 @@ namespace Shipping.Infrastructure.Services
 
         public Money CalculateShippingCost(Order order)
         {
-            var total = order.Total();
+            var total = order.GetTotal();
             var cost = Math.Round(total.Amount * _rate, 2);
             return new Money(cost, total.Currency);
         }
